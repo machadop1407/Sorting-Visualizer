@@ -1,4 +1,4 @@
-#Sorting Visualizer
+# Sorting Visualizer
 
 This is a sorting visualizer I made to help me comprehend the similarities between all the sorting algorithms. 
 I decided to include 5 algorithms ranging from worst time complexity to best. The following algorithms were
@@ -10,10 +10,10 @@ included:
 - Radix Sort (time complexity: O(nk)) -> k = Amount of Digits in the value inside array with the largest amount of digits
 
 
-##Time Taken:
+## Time Taken:
 This took 1 week to complete.
 
-##Technologies:
+## Technologies:
 - ReactJS -> Dependencies: Use-Sound, React-Toggle
 - CSS
 
