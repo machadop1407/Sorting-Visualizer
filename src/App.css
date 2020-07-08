@@ -84,6 +84,18 @@ button:focus {
   opacity: 1;
 }
 
+.arrayControllers .toggle {
+  margin-top: 15px;
+  margin-left: 20px;
+  padding-top: 0;
+}
+
+.arrayControllers .toggle #soundLabel {
+  position: absolute;
+  margin-left: 10px;
+  margin-top: 5px;
+}
+
 .arrayContainer {
   position: absolute;
   bottom: 100px;

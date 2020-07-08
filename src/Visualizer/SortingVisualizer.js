@@ -1,4 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
+import useSound from "use-sound";
+import beepSound from "../Sounds/beepSound.wav";
+import beepSound2 from "../Sounds/beepSound2.wav";
+
+import Toggle from "react-toggle";
+import "react-toggle/style.css";
 
 //Change At Will
 const ARRAYSIZE = 100;
@@ -10,8 +16,14 @@ export default function SortingVisualizer() {
   //Animation Speed
   const [animationSpeed, setAnimationSpeed] = useState(40);
 
+  const [soundOn, setSoundOn] = useState(false);
+
   //AlgorithmChosen
   const [algorithm, setAlgorithm] = useState({});
+
+  // Sound Effects
+  const [playBeep1] = useSound(beepSound, { volume: soundOn ? 0.15 : 0 });
+  const [playBeep2] = useSound(beepSound2, { volume: soundOn ? 0.05 : 0 });
 
   //Initial Random Array
   useEffect(() => {
@@ -22,6 +34,10 @@ export default function SortingVisualizer() {
    * Effect: Generates a random array with values from 20 to 400 and changes the array state
    */
   function randomizeArray() {
+    for (var i = 0; i < primaryArray.length; i++) {
+      var bar = document.getElementById(i).style;
+      bar.backgroundColor = "#ff7f50";
+    }
     var array = [];
     for (var i = 0; i < ARRAYSIZE; i++) {
       array.push(randomVals(20, 400));
@@ -40,6 +56,16 @@ export default function SortingVisualizer() {
   const sleep = (milliseconds) => {
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
   };
+
+  //ANIMATION FOR WHEN THE SORTING IS FINISHED
+  async function finishedAnimation() {
+    for (var i = 0; i < primaryArray.length; i++) {
+      var bar = document.getElementById(i).style;
+      bar.backgroundColor = "green";
+      playBeep1();
+      await sleep(animationSpeed);
+    }
+  }
 
   // ------------ ALGORITHMS ------------ //
 
@@ -75,7 +101,9 @@ export default function SortingVisualizer() {
           bar2.backgroundColor = "#FF7F50";
 
           sorted = false;
+          playBeep1();
         }
+        playBeep2();
       }
       if (sorted) finishedAnimation();
     }
@@ -106,6 +134,7 @@ export default function SortingVisualizer() {
 
         await sleep(animationSpeed);
 
+        playBeep1();
         //Changes the Style back to original
         bar1.backgroundColor = "#FF7F50";
         bar2.backgroundColor = "#FF7F50";
@@ -122,6 +151,7 @@ export default function SortingVisualizer() {
       arr[lastChild] = swap1;
       heapify(arr, lastChild, 0);
       lastChild--;
+      playBeep2();
 
       setPrimaryArray([...primaryArray, arr]);
 
@@ -206,7 +236,7 @@ export default function SortingVisualizer() {
     mergeSortHelper(auxiliaryArray, middleIdx + 1, endIdx, mainArray);
 
     await sleep(animationSpeed);
-
+    playBeep2();
     doMerge(mainArray, startIdx, middleIdx, endIdx, auxiliaryArray);
   }
 
@@ -217,6 +247,7 @@ export default function SortingVisualizer() {
     let j = middleIdx + 1;
 
     while (i <= middleIdx && j <= endIdx) {
+      playBeep1();
       if (auxiliaryArray[i] <= auxiliaryArray[j]) {
         //Compare values and overwrite primary array with new sorted array
         mainArray[k++] = auxiliaryArray[i++];
@@ -225,6 +256,7 @@ export default function SortingVisualizer() {
         let bar2 = document.getElementById(i).style;
         bar1.backgroundColor = "#DC143C";
         bar2.backgroundColor = "#6A5ACD";
+
         setTimeout(() => {
           bar1.backgroundColor = "#ff7f50";
           bar2.backgroundColor = "#ff7f50";
@@ -237,7 +269,6 @@ export default function SortingVisualizer() {
         let bar2 = document.getElementById(i).style;
         bar1.backgroundColor = "#DC143C";
         bar2.backgroundColor = "#6A5ACD";
-
         setTimeout(() => {
           bar1.backgroundColor = "#ff7f50";
           bar2.backgroundColor = "#ff7f50";
@@ -286,7 +317,7 @@ export default function SortingVisualizer() {
 
       setPrimaryArray([...primaryArray, arr]);
       await sleep(animationSpeed + 100);
-
+      playBeep2();
       sort(arr, left, partitionIndex - 1);
       sort(arr, partitionIndex + 1, right);
     }
@@ -295,10 +326,10 @@ export default function SortingVisualizer() {
   function partition(arr, left, right) {
     var pivot = arr[right];
     var i = left - 1;
+    playBeep1();
     for (var j = left; j < right; j++) {
       if (arr[j] < pivot) {
         i++;
-
         var temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
@@ -324,12 +355,71 @@ export default function SortingVisualizer() {
     return i + 1;
   }
 
-  async function finishedAnimation() {
-    for (var i = 0; i < primaryArray.length; i++) {
-      var bar = document.getElementById(i).style;
-      bar.backgroundColor = "green";
-      await sleep(animationSpeed);
+  /////RadixSort
+
+  function radixCaller() {
+    setAlgorithm({ name: "Radix Sort", timeComplexity: "O(log10(n))" });
+    var currentArr = primaryArray;
+    radixSort(currentArr);
+  }
+
+  async function radixSort(arr) {
+    const max = getMax(arr); // length of the max digit in the array
+
+    for (let i = 0; i < max; i++) {
+      let buckets = Array.from({ length: 10 }, () => []);
+      for (let j = 0; j < arr.length; j++) {
+        buckets[getPosition(arr[j], i)].push(arr[j]); // pushing into buckets
+        var bar = document.getElementById(i).style;
+        bar.backgroundColor = "#6A5ACD";
+      }
+
+      await sleep(animationSpeed + 300);
+
+      var animArr = [];
+      for (var c = 0; c < ARRAYSIZE / 10; c++) {
+        animArr.push(randomVals(0, ARRAYSIZE - 1));
+      }
+
+      animArr.forEach((val) => {
+        var bar = document.getElementById(val).style;
+        bar.backgroundColor = "#DC143C";
+        playBeep1();
+      });
+
+      var animArr2 = [];
+      for (var c = 0; c < ARRAYSIZE / 10; c++) {
+        animArr2.push(randomVals(0, ARRAYSIZE - 1));
+      }
+
+      animArr2.forEach((val) => {
+        var bar = document.getElementById(val).style;
+        bar.backgroundColor = "#6A5ACD";
+        playBeep2();
+      });
+
+      arr = [].concat(...buckets);
+      setPrimaryArray(arr);
     }
+
+    finishedAnimation();
+
+    return arr;
+  }
+
+  function getMax(arr) {
+    let max = 0;
+    for (let num of arr) {
+      if (max < num.toString().length) {
+        max = num.toString().length;
+      }
+    }
+    return max;
+  }
+
+  function getPosition(num, place) {
+    var result = Math.floor(Math.abs(num) / Math.pow(10, place)) % 10;
+    return result;
   }
 
   return (
@@ -349,6 +439,7 @@ export default function SortingVisualizer() {
             Merge Sort
           </button>
           <button onClick={quickSort}>Quick Sort</button>
+          <button onClick={radixCaller}>Radix Sort</button>
         </div>
       </div>
 
@@ -387,6 +478,16 @@ export default function SortingVisualizer() {
           >
             Fast
           </button>
+        </div>
+        <div className="toggle">
+          <Toggle
+            defaultChecked={soundOn}
+            icons={false}
+            onChange={() => {
+              setSoundOn(!soundOn);
+            }}
+          />
+          <span id="soundLabel">Sound {soundOn ? "On" : "Off"}</span>
         </div>
       </div>
       <div className="arrayContainer">
