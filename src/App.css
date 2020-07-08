@@ -1,5 +1,4 @@
-html,
-body {
+html, body {
   padding: 0;
   margin: 0;
   background-color: aquamarine;
@@ -56,6 +55,7 @@ button:focus {
 .arrayControllers #velocity {
   margin-left: 50px;
 }
+
 .arrayControllers button {
   width: 120px;
   height: 60px;
@@ -94,6 +94,8 @@ button:focus {
   position: absolute;
   margin-left: 10px;
   margin-top: 5px;
+  color: #6495ed;
+  font-weight: 800;
 }
 
 .arrayContainer {
@@ -118,7 +120,6 @@ button:focus {
   height: 70px;
   border: 5px solid #6495ed;
   border-radius: 5px;
-
   display: flex;
   justify-content: center;
   align-items: center;

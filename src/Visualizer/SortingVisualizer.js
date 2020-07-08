@@ -16,7 +16,7 @@ export default function SortingVisualizer() {
   //Animation Speed
   const [animationSpeed, setAnimationSpeed] = useState(40);
 
-  const [soundOn, setSoundOn] = useState(false);
+  const [soundOn, setSoundOn] = useState(true);
 
   //AlgorithmChosen
   const [algorithm, setAlgorithm] = useState({});
@@ -504,16 +504,16 @@ export default function SortingVisualizer() {
           })}
       </div>
 
-      <div className="algorithmInfo">
-        {algorithm.name != undefined && (
+      {algorithm.name != undefined && (
+        <div className="algorithmInfo">
           <>
             <div id="name">Algorithm: {algorithm.name}</div>
             <div id="timeComplexity">
               Time Complexity: {algorithm.timeComplexity}{" "}
             </div>
           </>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
